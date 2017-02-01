@@ -6,14 +6,20 @@
 # 			    	set up file structure      			  # 
 #   /==================================================/  #
 
-echo -n "Enter your Project Name and press [ENTER]: "
+echo "  "
+echo " Welcome to mean_scaffold "
+echo "  "
+echo " READY "
+echo "  "
+echo "  "
+echo "Enter your Project Name and press [ENTER]: "
 read project_name
 mkdir $project_name
 cd $project_name
-mkdir ./client
-mkdir ./client/assets
-mkdir ./client/assets/partials
-mkdir ./client/assets/js
+# mkdir ./client
+# mkdir ./client/assets
+# mkdir ./client/assets/partials
+# mkdir ./client/assets/js
 touch ./client/index.html
 touch ./client/app.js
 touch ./client/assets/js/indexController.js
@@ -22,7 +28,7 @@ touch ./client/assets/js/showController.js
 touch ./client/assets/partials/index.html
 touch ./client/assets/partials/show.html
 touch ./client/assets/partials/edit.html
-touch ./client/assets/partials/new.html
+# touch ./client/assets/partials/new.html
 mkdir ./server
 mkdir ./server/config
 mkdir ./server/models
@@ -77,12 +83,14 @@ echo " }); " >> ./server.js
 
 if [ -f ./package.json ]; then
 	echo "Already installed"
+	echo "  "
 else
 	npm init -y
 	npm install express mongoose body-parser --save
 fi
 if [ -f ./bower.json ]; then
 	echo "Already installed"
+	echo "  "
 else
 	yes '' | bower init
 	bower install angular angular-route --save
@@ -98,29 +106,66 @@ fi
 
 declare -a models_array
 function pushModel() {
-	echo -n "Enter your Model Name and press [ENTER]: "
+	echo "            ___        ___    __ __ __ __          _          ___       __                  "
+	echo "           |   \      /   |  |  __ __ ___|        / \        |   \     |  |                 "
+	echo "           | |\ \    / /| |  | |                 / | \       |    \    |  |                 "
+	echo "           | | \ \  / / | |  | |__ __ __        /  |  \      |     \   |  |                 "
+	echo "           | |  \ \/ /  | |  |  __ __ __|      /  ___  \     |  |\  \  |  |                 "
+	echo "           | |   \__/   | |  | |              /  /   \  \    |  | \  \_|  |                 "
+	echo "           | |          | |  | |__ __ ___    /  /     \  \   |  |  \      |                 "
+	echo "           |_|          |_|  |__ __ __ __|  /__/       \__\  |__|   \_____|                 "
+	echo "  																	                      "
+	echo "                                                                                            " 
+	echo "  __ __ __     __ __ __                   __ ___     __ ___     __ __     _        ___      "
+	echo " |  _____  |  |  _____  |       /\       |  ____|   |  ____|   |     |   | |      |    \    "
+	echo " | |     |_|  | |     |_|      /  \      | |        | |        |  |  |   | |      |  |  |   "
+	echo " | |_______   | |             /    \     | |___     | |___     |  |  |   | |      |  |  |   "
+	echo " |_______  |  | |      _     /  /\  \    |  ___|    |  ___|    |  |  |   | |      |  |  |   "
+	echo "  _______| |  | |_____| |   /  /  \  \   | |        | |        |  |  |   | |___   |  |  |   "
+	echo " |__ __ __ |  |__ __ __ |  /__/    \__\  |_|        |_|        |__ __|   |__ __|  |__ _/    "
+	echo "  														                                  "
+	echo "  														                                  "
+	echo "Enter your Model Name and press [ENTER]: "
 	read model_name
 	models_array+=('model' $model_name)
 }
 pushModel
 
 function pushAttributes() {
-	echo -n "Enter Attribute NAME and press [ENTER]: "
+	echo "  "
+	echo "Enter Attribute NAME and press [ENTER]: "
 	read attr_name
 	models_array+=('a_name' $attr_name)
-	echo -n "Enter Attribute TYPE and press [ENTER]: "
+	echo "  "
+	echo "Enter Attribute TYPE and press [ENTER]: "
 	read attr_type
 	models_array+=('a_type' $attr_type)
-	echo -n "Another Attribute? Type no to exit"
+	echo "  "
+	echo "Another Attribute? Type no to exit"
 	read another_attr
 	if ! [ $another_attr == 'no' ]; then
 		pushAttributes
 	else
-		echo -n "Another Model? Type no to exit"
+		echo "  "
+		echo "Another Model? Type no to exit"
 			read another_model
 			if ! [ $another_model == 'no' ]; then
 				pushModel
 				pushAttributes
+			else
+				echo "  "
+				echo "  "
+				echo "  "
+				echo "  "
+				echo "  run your server.js "
+				echo "  "
+				echo "  "
+				echo "  "
+				echo "   p.s. cd into your project first "
+				echo "  "
+				echo "  "
+				echo "  "
+				echo "  "
 			fi
 	fi
 }
@@ -306,10 +351,8 @@ for f in "${!models_array[@]}"; do
 		echo "<table>" >> ./client/assets/partials/index.html
 		echo " <tr>" >> ./client/assets/partials/index.html
 	elif [ "${models_array[$f]}" == 'a_name' ]; then
-		echo "   <th>" >> ./client/assets/partials/index.html
-		echo "     "${models_array[$f+1]}"" >> ./client/assets/partials/index.html
+		echo "   <th>"${models_array[$f+1]}"</th>" >> ./client/assets/partials/index.html
 		attr_array+=(${models_array[$f+1]})
-		echo "   </th>" >> ./client/assets/partials/index.html
 		echo "   <th>Actions</th>" >> ./client/assets/partials/index.html
 	elif [ "${models_array[$f+1]}" == 'model' ] || [ "$f" == "$(( length-1 ))" ]; then
 		echo "   </tr>" >> ./client/assets/partials/index.html
@@ -407,6 +450,21 @@ for l in "${!factories_array[@]}"; do
 	echo "" >> ./client/assets/js/indexController.js
 done
 echo "}])" >> ./client/assets/js/indexController.js
+
+
+#  /==================================================/  #
+#			      	   FACTORIES            			 # 
+#  /==================================================/  #
+
+declare -a factories_array
+for f in "${!models_array[@]}"; do
+	if [ "${models_array[$f]}" == 'model' ]; then
+		factories_array+=(${models_array[$f+1]}"s")
+	fi
+done
+for g in "${!factories_array[@]}"; do
+	echo "app.factory(""'"${factories_array[$g]}"Factory', ['$http', "
+done
 
 
 
