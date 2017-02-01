@@ -1,6 +1,10 @@
 #!/bin/bash
 
-	# printf "%s\t%s\n" "$f" "${models_array[$f]}"
+# printf "%s\t%s\n" "$f" "${models_array[$f]}"
+
+#   /==================================================/  #
+# 			    	set up file structure      			  # 
+#   /==================================================/  #
 
 echo -n "Enter your Project Name and press [ENTER]: "
 read project_name
@@ -10,8 +14,8 @@ mkdir ./client
 mkdir ./client/assets
 mkdir ./client/assets/partials
 mkdir ./client/assets/js
-touch ./client/assets/index.html
-touch ./client/assets/app.js
+touch ./client/index.html
+touch ./client/app.js
 touch ./client/assets/js/indexController.js
 touch ./client/assets/js/editController.js
 touch ./client/assets/js/showController.js
@@ -27,11 +31,14 @@ touch ./server.js
 touch ./server/config/routes.js
 touch ./server/config/mongoose.js
 
+#   /==================================================/  #
+#   /==================================================/  #
+# 				    	SERVER SIDE         			  # 
+#   /==================================================/  #
+#   /==================================================/  #
 
 #  /==================================================/  #
-#  /==================================================/  #
 #			    	      CONFIG 						 # 
-#  /==================================================/  #
 #  /==================================================/  #
 
 #  /==================================================/  #
@@ -81,11 +88,8 @@ else
 	bower install angular angular-route --save
 fi
 
-
-#  /==================================================/  #
 #  /==================================================/  #
 #			   		 	  MODELS						 # 
-#  /==================================================/  #
 #  /==================================================/  #
 
 #  /==================================================/  #
@@ -145,60 +149,141 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 
+#   /==================================================/  #
+# 				        CONTROLLERS         			  # 
+#   /==================================================/  #
 
-#  /==================================================/  #
+for f in "${!models_array[@]}"; do
+	# printf "%s\t%s\n" "$f" "${models_array[$f]}"
+	controller_name="$currmodel"'s'
+	touch ./server/controllers/$controller_name.js
+	length=${#models_array[@]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		currmodel="${models_array[$f+1]}"
+		controller_name="$currmodel"'s'
+		parens="()"
+		touch ./server/controllers/$controller_name.js
+		echo "var mongoose = require('mongoose')," >> ./server/controllers/"$controller_name".js
+		echo " " $currmodel "= mongoose.model(""'"$currmodel"'"");" >> ./server/controllers/"$controller_name".js
+		echo " " >> ./server/controllers/"$controller_name".js
+		echo "function" $controller_name"Controller"$parens" {" >> ./server/controllers/"$controller_name".js
+		echo "  this.index = function(req,res) {" >> ./server/controllers/"$controller_name".js
+		echo "     "$currmodel".find({}, function(err,"$currmodel"s) {" >> ./server/controllers/"$controller_name".js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
+		echo "       else { res.json("$currmodel"s); }" >> ./server/controllers/"$controller_name".js
+		echo "     })" >> ./server/controllers/"$controller_name".js
+		echo "  }" >> ./server/controllers/"$controller_name".js
+		echo " " >> ./server/controllers/"$controller_name".js
+		echo "  this.create = function(req,res) {" >> ./server/controllers/"$controller_name".js
+		echo "     var "$currmodel" = new" $currmodel"(req.body);" >> ./server/controllers/"$controller_name".js
+		echo "     "$currmodel".save(function(err) {" >> ./server/controllers/"$controller_name".js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
+		echo "       else { res.redirect('/"$currmodel"s'); }" >> ./server/controllers/"$controller_name".js
+		echo "     })" >> ./server/controllers/"$controller_name".js
+		echo "  }" >> ./server/controllers/"$controller_name".js
+		echo " " >> ./server/controllers/"$controller_name".js
+		echo "  this.show = function(req,res) {" >> ./server/controllers/"$controller_name".js
+		echo "     "$currmodel".findOne({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
+		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
+		echo "     })" >> ./server/controllers/"$controller_name".js
+		echo "  }" >> ./server/controllers/"$controller_name".js
+		echo " " >> ./server/controllers/"$controller_name".js
+		echo "  this.update = function(req,res) {" >> ./server/controllers/"$controller_name".js
+		echo "     "$currmodel".update({_id:req.params.id}, req.body, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
+		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
+		echo "     })" >> ./server/controllers/"$controller_name".js
+		echo "  }" >> ./server/controllers/"$controller_name".js
+		echo " " >> ./server/controllers/"$controller_name".js
+		echo "  this.destroy = function(req,res) {" >> ./server/controllers/"$controller_name".js
+		echo "     "$currmodel".remove({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
+		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
+		echo "     })" >> ./server/controllers/"$controller_name".js
+		echo "  }" >> ./server/controllers/"$controller_name".js
+		echo "}" >> ./server/controllers/"$controller_name".js
+		echo "module.exports = new "$controller_name"Controller"$parens"" >> ./server/controllers/"$controller_name".js
+	fi
+done
+
+# #  /==================================================/  #
+# #					    	ROUTES 						   # 
+# #  /==================================================/  #
+
+for f in "${!models_array[@]}"; do
+	currmodel="${models_array[$f+1]}"
+	controller_name="$currmodel"'s'
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "var "$controller_name" = require('../controllers/"$controller_name".js');" >> ./server/config/routes.js
+	fi
+done
+echo "module.exports = function(app) {" >> ./server/config/routes.js
+for f in "${!models_array[@]}"; do
+	if [ "${models_array[$f]}" == 'model' ]; then
+		currmodel="${models_array[$f+1]}"
+		controller_name="$currmodel"'s'
+		echo "  app.get('/"$controller_name"', "$controller_name".index);" >> ./server/config/routes.js
+		echo "  app.post('/"$controller_name"', "$controller_name".create);" >> ./server/config/routes.js
+		echo "  app.get('/"$controller_name"/:id', "$controller_name".show);" >> ./server/config/routes.js
+		echo "  app.put('/"$controller_name"/:id', "$controller_name".update);" >> ./server/config/routes.js
+		echo "  app.delete('/"$controller_name"/:id', "$controller_name".destroy);" >> ./server/config/routes.js
+	fi
+done
+echo "} " >> ./server/config/routes.js
+
 #  /==================================================/  #
 #				   index.html  (main)    				 # 
 #  /==================================================/  #
-#  /==================================================/  #
-echo "<!DOCTYPE html>" >> ./client/assets/index.html
-echo "<html ng-app='app'>" >> ./client/assets/index.html
-echo "<head>" >> ./client/assets/index.html
-echo "  <title>"$project_name"</title>" >> ./client/assets/index.html
-echo "  <script src='angular/angular.js'></script>" >> ./client/assets/index.html
-echo "  <script src='angular-route/angular-route.js'></script>" >> ./client/assets/index.html
-echo "  <script src='app.js'></script>" >> ./client/assets/index.html
+
+echo "<!DOCTYPE html>" >> ./client/index.html
+echo "<html ng-app='app'>" >> ./client/index.html
+echo "<head>" >> ./client/index.html
+echo "  <title>"$project_name"</title>" >> ./client/index.html
+echo "  <script src='angular/angular.js'></script>" >> ./client/index.html
+echo "  <script src='angular-route/angular-route.js'></script>" >> ./client/index.html
+echo "  <script src='app.js'></script>" >> ./client/index.html
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
 		touch ./client/assets/js/"$currmodel"Factory.js
-		echo "  <script src=""'assets/js/"$currmodel"Factory.js'""></script>" >> ./client/assets/index.html
+		echo "  <script src=""'assets/js/"$currmodel"Factory.js'""></script>" >> ./client/index.html
 	fi
 done
-echo "</head>" >> ./client/assets/index.html
-echo "<body>" >> ./client/assets/index.html
-echo "  <div ng-view></div>" >> ./client/assets/index.html
-echo "</body>" >> ./client/assets/index.html
-echo "</html>" >> ./client/assets/index.html
+echo "  <script src='assets/js/indexController.js'></script>" >> ./client/index.html
+echo "  <script src='assets/js/editController.js'></script>" >> ./client/index.html
+echo "  <script src='assets/js/showController.js'></script>" >> ./client/index.html
+echo "</head>" >> ./client/index.html
+echo "<body>" >> ./client/index.html
+echo "  <div ng-view></div>" >> ./client/index.html
+echo "</body>" >> ./client/index.html
+echo "</html>" >> ./client/index.html
 
-
-
-#  /==================================================/  #
 #  /==================================================/  #
 #				           app.js  	    				 # 
 #  /==================================================/  #
-#  /==================================================/  #
 
-echo "var app = angular.module('app', ['ngRoute'])" >> ./client/assets/app.js
-echo "app.config(function($routeProvider) {" >> ./client/assets/app.js
-echo "  $routeProvider" >> ./client/assets/app.js
-echo "    .when('/', {" >> ./client/assets/app.js
-echo "      templateUrl: 'assets/partials/index.html'" >> ./client/assets/app.js
-echo "      controller:  'indexController'" >> ./client/assets/app.js
-echo "    }) " >> ./client/assets/app.js
-echo "    .when('/new/:class', {" >> ./client/assets/app.js
-echo "      templateUrl: 'assets/partials/new.html'" >> ./client/assets/app.js
-echo "      controller:  'newController'" >> ./client/assets/app.js
-echo "    }) " >> ./client/assets/app.js
-echo "    .when('/:class/:id', {" >> ./client/assets/app.js
-echo "      templateUrl: 'assets/partials/show.html'" >> ./client/assets/app.js
-echo "      controller:  'showController'" >> ./client/assets/app.js
-echo "    }) " >> ./client/assets/app.js
+route='$routeProvider'
+echo "var app = angular.module('app', ['ngRoute'])" >> ./client/app.js
+echo "app.config(function("$route") {" >> ./client/app.js
+echo "  "$route"" >> ./client/app.js
+echo "    .when('/', {" >> ./client/app.js
+echo "      templateUrl: 'assets/partials/index.html'," >> ./client/app.js
+echo "      controller:  'indexController'" >> ./client/app.js
+echo "    }) " >> ./client/app.js
+echo "    .when('/new/:class', {" >> ./client/app.js
+echo "      templateUrl: 'assets/partials/new.html'," >> ./client/app.js
+echo "      controller:  'newController'" >> ./client/app.js
+echo "    }) " >> ./client/app.js
+echo "    .when('/:class/:id', {" >> ./client/app.js
+echo "      templateUrl: 'assets/partials/show.html'," >> ./client/app.js
+echo "      controller:  'showController'" >> ./client/app.js
+echo "    }) " >> ./client/app.js
+echo "     .otherwise('/');" >> ./client/app.js
+echo " });" >> ./client/app.js
 
-#  /==================================================/  #
 #  /==================================================/  #
 #			      		 PARTIALS  	        			 # 
-#  /==================================================/  #
 #  /==================================================/  #
 
 #  /==================================================/  #
@@ -208,8 +293,8 @@ echo "    }) " >> ./client/assets/app.js
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
-		echo "<a href=""'/new/"$currmodel"'"">Create "$currmodel"</a>" >> ./client/assets/index.html
-		echo "" >> ./client/assets/index.html
+		echo "<a href=""'#!/new/"$currmodel"'"">Create "$currmodel"</a>" >> ./client/assets/partials/index.html
+		echo "" >> ./client/assets/partials/index.html
 	fi
 done
 for f in "${!models_array[@]}"; do
@@ -217,23 +302,29 @@ for f in "${!models_array[@]}"; do
 	declare -a attr_array
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
-		echo "<h1>"${models_array[$f+1]}"</h1>" >> ./client/assets/index.html
-		echo "<table>" >> ./client/assets/index.html
-		echo " <tr>" >> ./client/assets/index.html
+		echo "<h1>"${models_array[$f+1]}"</h1>" >> ./client/assets/partials/index.html
+		echo "<table>" >> ./client/assets/partials/index.html
+		echo " <tr>" >> ./client/assets/partials/index.html
 	elif [ "${models_array[$f]}" == 'a_name' ]; then
-		echo "   <th>" >> ./client/assets/index.html
-		echo "     "${models_array[$f+1]}"" >> ./client/assets/index.html
+		echo "   <th>" >> ./client/assets/partials/index.html
+		echo "     "${models_array[$f+1]}"" >> ./client/assets/partials/index.html
 		attr_array+=(${models_array[$f+1]})
-		echo "   </th>" >> ./client/assets/index.html
+		echo "   </th>" >> ./client/assets/partials/index.html
+		echo "   <th>Actions</th>" >> ./client/assets/partials/index.html
 	elif [ "${models_array[$f+1]}" == 'model' ] || [ "$f" == "$(( length-1 ))" ]; then
-		echo "   </tr>" >> ./client/assets/index.html
-		echo "   <tr ng-repeat=""'"$currmodel" in "$currmodel"s'"">" >> ./client/assets/index.html
+		echo "   </tr>" >> ./client/assets/partials/index.html
+		echo "   <tr ng-repeat=""'"$currmodel" in "$currmodel"s'"">" >> ./client/assets/partials/index.html
 		for g in "${!attr_array[@]}"; do
-			echo "     <td ng-bind=""'"$currmodel"."${attr_array[$g]}"'""></td>" >> ./client/assets/index.html
+			echo "     <td ng-bind=""'"$currmodel"."${attr_array[$g]}"'""></td>" >> ./client/assets/partials/index.html
 		done
 		attr_array=()
-		echo "   </tr>" >> ./client/assets/index.html
-		echo " </table>" >> ./client/assets/index.html
+		echo "     <td>" >> ./client/assets/partials/index.html
+		echo "       <a href='#!/"$currmodel"/{{"$currmodel"._id}}'>Show</a>" >> ./client/assets/partials/index.html
+		echo "       <a href='#!/"$currmodel"/{{"$currmodel"._id}}/edit'>Edit</a>" >> ./client/assets/partials/index.html
+		echo "       <button ng-click='destroy("$currmodel")'>X</button>" >> ./client/assets/partials/index.html
+		echo "     </td>" >> ./client/assets/partials/index.html
+		echo "   </tr>" >> ./client/assets/partials/index.html
+		echo " </table>" >> ./client/assets/partials/index.html
 
 	fi
 done
@@ -241,12 +332,13 @@ done
 #  /==================================================/  #
 #			              new.html  	       			 # 
 #  /==================================================/  #
-echo "      <!--                    -->" >> ./client/assets/new.html
-echo "      <!--  SET UP YOUR FORM  -->" >> ./client/assets/new.html
-echo "      <!-- here is an example -->" >> ./client/assets/new.html
-echo "      <!--                    -->" >> ./client/assets/new.html
+
+echo "      <!--                    -->" >> ./client/assets/partials/new.html
+echo "      <!--  SET UP YOUR FORM  -->" >> ./client/assets/partials/new.html
+echo "      <!-- here is an example -->" >> ./client/assets/partials/new.html
+echo "      <!--                    -->" >> ./client/assets/partials/new.html
 declare -a attr_array=()
-echo "<form ng-model='{{class}}' ng-submit='create()';>" >> ./client/assets/new.html
+echo "<form ng-model='{{class}}' ng-submit='create()';>" >> ./client/assets/partials/new.html
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'a_name' ]; then
 		attr_array+=(${models_array[$f+3]})
@@ -256,106 +348,65 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 for m in "${!attr_array[@]}"; do
-	printf "%s\t%s\n" "$m" "${attr_array[$m]}"
 	if [ "${attr_array[$m]}" == 'String' ]; then
-		echo "  <input type='text' ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/new.html
+		echo "  <input type='text' ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/partials/new.html
 	elif [ "${attr_array[$m]}" == 'Number' ]; then
-		echo "  <input type='number' ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/new.html
+		echo "  <input type='number' ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/partials/new.html
 	elif [ "${attr_array[$m]}" == 'Date' ]; then
-		echo "  <input type='date' ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/new.html
+		echo "  <input type='date' ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/partials/new.html
 	elif [ "${attr_array[$m]}" == 'Boolean' ]; then
-		echo "  <select ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/new.html
-		echo "    <option>True</option>" >> ./client/assets/new.html
-		echo "    <option>False</option>" >> ./client/assets/new.html
-		echo "  </select>" >> ./client/assets/new.html
+		echo "  <select ng-model=""'{{class}}."'<!-- FILL THIS IN WITH YOUR ATTRIBUTE -->'"'>" >> ./client/assets/partials/new.html
+		echo "    <option>True</option>" >> ./client/assets/partials/new.html
+		echo "    <option>False</option>" >> ./client/assets/partials/new.html
+		echo "  </select>" >> ./client/assets/partials/new.html
 	fi
 done
-echo "  <input type='submit' value='Create'>" >> ./client/assets/new.html
-echo "</form>" >> ./client/assets/new.html
+echo "  <input type='submit' value='Create'>" >> ./client/assets/partials/new.html
+echo "</form>" >> ./client/assets/partials/new.html
 
+#  /==================================================/  #
+#			      	   CONTROLLERS          			 # 
+#  /==================================================/  #
 
-# #  /==================================================/  #
-# #  /==================================================/  #
-# #				    		CONTROLLERS     			   # 
-# #  /==================================================/  #
-# #  /==================================================/  #
+#  /==================================================/  #
+#			         indexController.js	       			 # 
+#  /==================================================/  #
 
-# for f in "${!models_array[@]}"; do
-# 	# printf "%s\t%s\n" "$f" "${models_array[$f]}"
-# 	controller_name="$currmodel"'s'
-# 	touch ./server/controllers/$controller_name.js
-# 	length=${#models_array[@]}
-# 	if [ "${models_array[$f]}" == 'model' ]; then
-# 		currmodel="${models_array[$f+1]}"
-# 		controller_name="$currmodel"'s'
-# 		parens="()"
-# 		touch ./server/controllers/$controller_name.js
-# 		echo "var mongoose = require('mongoose')," >> ./server/controllers/"$controller_name".js
-# 		echo " " $currmodel "= mongoose.model(""'"$currmodel"'"");" >> ./server/controllers/"$controller_name".js
-# 		echo " " >> ./server/controllers/"$controller_name".js
-# 		echo "function" $controller_name"Controller"$parens" {" >> ./server/controllers/"$controller_name".js
-# 		echo "  this.index = function(req,res) {" >> ./server/controllers/"$controller_name".js
-# 		echo "     "$currmodel".find({}, function(err,"$currmodel"s) {" >> ./server/controllers/"$controller_name".js
-# 		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-# 		echo "       else { res.json("$currmodel"s); }" >> ./server/controllers/"$controller_name".js
-# 		echo "     })" >> ./server/controllers/"$controller_name".js
-# 		echo "  }" >> ./server/controllers/"$controller_name".js
-# 		echo " " >> ./server/controllers/"$controller_name".js
-# 		echo "  this.create = function(req,res) {" >> ./server/controllers/"$controller_name".js
-# 		echo "     var "$currmodel" = new" $currmodel"(req.body);" >> ./server/controllers/"$controller_name".js
-# 		echo "     "$currmodel".save(function(err) {" >> ./server/controllers/"$controller_name".js
-# 		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-# 		echo "       else { res.redirect('/"$currmodel"s'); }" >> ./server/controllers/"$controller_name".js
-# 		echo "     })" >> ./server/controllers/"$controller_name".js
-# 		echo "  }" >> ./server/controllers/"$controller_name".js
-# 		echo " " >> ./server/controllers/"$controller_name".js
-# 		echo "  this.show = function(req,res) {" >> ./server/controllers/"$controller_name".js
-# 		echo "     "$currmodel".findOne({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
-# 		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-# 		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
-# 		echo "     })" >> ./server/controllers/"$controller_name".js
-# 		echo "  }" >> ./server/controllers/"$controller_name".js
-# 		echo " " >> ./server/controllers/"$controller_name".js
-# 		echo "  this.update = function(req,res) {" >> ./server/controllers/"$controller_name".js
-# 		echo "     "$currmodel".update({_id:req.params.id}, req.body, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
-# 		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-# 		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
-# 		echo "     })" >> ./server/controllers/"$controller_name".js
-# 		echo "  }" >> ./server/controllers/"$controller_name".js
-# 		echo " " >> ./server/controllers/"$controller_name".js
-# 		echo "  this.destroy = function(req,res) {" >> ./server/controllers/"$controller_name".js
-# 		echo "     "$currmodel".remove({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
-# 		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-# 		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
-# 		echo "     })" >> ./server/controllers/"$controller_name".js
-# 		echo "  }" >> ./server/controllers/"$controller_name".js
-# 		echo "}" >> ./server/controllers/"$controller_name".js
-# 		echo "module.exports = new "$controller_name"Controller"$parens"" >> ./server/controllers/"$controller_name".js
-# 	fi
+declare -a factories_array
+scope='$scope'
+for f in "${!models_array[@]}"; do
+	if [ "${models_array[$f]}" == 'model' ]; then
+		factories_array+=(${models_array[$f+1]}"s")
+	fi
+done
+length=${#factories_array[@]}
+# for f in "${!factories_array[@]}"; do
+# 	printf "%s\t%s\n" "$f" "${factories_array[$f]}"
 # done
 
-# #  /==================================================/  #
-# #					    	ROUTES 						   # 
-# #  /==================================================/  #
+echo "app.controller('indexController',[""'"$scope"'"", " >> ./client/assets/js/indexController.js
+for g in "${!factories_array[@]}"; do
+	echo "'"${factories_array[$g]}"Factory', " >> ./client/assets/js/indexController.js
+done
+echo "function("$scope", " >> ./client/assets/js/indexController.js
+for k in "${!factories_array[@]}"; do
+	if [ "$k" == "$(( length-1 ))" ]; then
+		echo ""${factories_array[$k]}"Factory " >> ./client/assets/js/indexController.js
+	else
+		echo ""${factories_array[$k]}"Factory, " >> ./client/assets/js/indexController.js
+	fi
+done
+echo ") {" >> ./client/assets/js/indexController.js
+for l in "${!factories_array[@]}"; do
+	echo " "$scope"."${factories_array[$l]}" = [];" >> ./client/assets/js/indexController.js
+	echo " "$scope".get"${factories_array[$l]}" = function() { " >> ./client/assets/js/indexController.js
+	echo "   "${factories_array[$l]}"Factory.index(function(data) {  " >> ./client/assets/js/indexController.js
+	echo "      "$scope"."${factories_array[$l]}" = data;" >> ./client/assets/js/indexController.js
+	echo "    })" >> ./client/assets/js/indexController.js
+	echo " }" >> ./client/assets/js/indexController.js
+	echo "" >> ./client/assets/js/indexController.js
+done
+echo "}])" >> ./client/assets/js/indexController.js
 
-# for f in "${!models_array[@]}"; do
-# 	currmodel="${models_array[$f+1]}"
-# 	controller_name="$currmodel"'s'
-# 	if [ "${models_array[$f]}" == 'model' ]; then
-# 		echo "var "$controller_name" = require('../controllers/"$controller_name".js');" >> ./server/config/routes.js
-# 	fi
-# done
-# echo "module.exports = function(app) {" >> ./server/config/routes.js
-# for f in "${!models_array[@]}"; do
-# 	if [ "${models_array[$f]}" == 'model' ]; then
-# 		currmodel="${models_array[$f+1]}"
-# 		controller_name="$currmodel"'s'
-# 		echo "  app.get('/"$controller_name"', "$controller_name".index);" >> ./server/config/routes.js
-# 		echo "  app.post('/"$controller_name"', "$controller_name".create);" >> ./server/config/routes.js
-# 		echo "  app.get('/"$controller_name"/:id', "$controller_name".show);" >> ./server/config/routes.js
-# 		echo "  app.put('/"$controller_name"/:id', "$controller_name".update);" >> ./server/config/routes.js
-# 		echo "  app.delete('/"$controller_name"/:id', "$controller_name".destroy);" >> ./server/config/routes.js
-# 	fi
-# done
-# echo "} " >> ./server/config/routes.js
+
 
