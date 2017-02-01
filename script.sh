@@ -16,19 +16,16 @@ echo "Enter your Project Name and press [ENTER]: "
 read project_name
 mkdir $project_name
 cd $project_name
-# mkdir ./client
-# mkdir ./client/assets
-# mkdir ./client/assets/partials
-# mkdir ./client/assets/js
+mkdir ./client
+mkdir ./client/assets
+mkdir ./client/assets/partials
+mkdir ./client/assets/js
 touch ./client/index.html
 touch ./client/app.js
 touch ./client/assets/js/indexController.js
 touch ./client/assets/js/editController.js
 touch ./client/assets/js/showController.js
 touch ./client/assets/partials/index.html
-touch ./client/assets/partials/show.html
-touch ./client/assets/partials/edit.html
-# touch ./client/assets/partials/new.html
 mkdir ./server
 mkdir ./server/config
 mkdir ./server/models
@@ -290,9 +287,8 @@ echo "  <script src='angular-route/angular-route.js'></script>" >> ./client/inde
 echo "  <script src='app.js'></script>" >> ./client/index.html
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
-		currmodel="${models_array[$f+1]}"
-		touch ./client/assets/js/"$currmodel"Factory.js
-		echo "  <script src=""'assets/js/"$currmodel"Factory.js'""></script>" >> ./client/index.html
+		currmodel=${models_array[$f+1]}"sFactory"
+		echo "  <script src=""'assets/js/"$currmodel".js'""></script>" >> ./client/index.html
 	fi
 done
 echo "  <script src='assets/js/indexController.js'></script>" >> ./client/index.html
@@ -316,14 +312,33 @@ echo "    .when('/', {" >> ./client/app.js
 echo "      templateUrl: 'assets/partials/index.html'," >> ./client/app.js
 echo "      controller:  'indexController'" >> ./client/app.js
 echo "    }) " >> ./client/app.js
-echo "    .when('/new/:class', {" >> ./client/app.js
-echo "      templateUrl: 'assets/partials/new.html'," >> ./client/app.js
-echo "      controller:  'newController'" >> ./client/app.js
-echo "    }) " >> ./client/app.js
-echo "    .when('/:class/:id', {" >> ./client/app.js
-echo "      templateUrl: 'assets/partials/show.html'," >> ./client/app.js
-echo "      controller:  'showController'" >> ./client/app.js
-echo "    }) " >> ./client/app.js
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/new/"$currmodel"', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/new"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'new"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/"$currmodel"/:id', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/show"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'show"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/edit/"$currmodel"/:id', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/edit"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'edit"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
 echo "     .otherwise('/');" >> ./client/app.js
 echo " });" >> ./client/app.js
 
@@ -423,9 +438,6 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 length=${#factories_array[@]}
-# for f in "${!factories_array[@]}"; do
-# 	printf "%s\t%s\n" "$f" "${factories_array[$f]}"
-# done
 
 echo "app.controller('indexController',[""'"$scope"'"", " >> ./client/assets/js/indexController.js
 for g in "${!factories_array[@]}"; do
@@ -456,14 +468,43 @@ echo "}])" >> ./client/assets/js/indexController.js
 #			      	   FACTORIES            			 # 
 #  /==================================================/  #
 
-declare -a factories_array
+http='$http'
+parens="()"
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
-		factories_array+=(${models_array[$f+1]}"s")
+		currfactory=${models_array[$f+1]}"s"
+		echo "app.factory(""'"$currfactory"Factory', ['"$http"', function("$http"){" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "  function "$currfactory"Factory"$parens"{" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.index = function(callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".get('/"$currfactory"').then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          callback(res.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.create = function(data, callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".post('/"$currfactory"', data).then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          callback(res.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.update = function(data, callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".put('/"$currfactory"', data).then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          callback(res.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.destroy = function(data, callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      var id = data._id;" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".delete('/"$currfactory"' + id).then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        "$http".get('/"$currfactory"').then(function(newRes) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "            callback(newRes.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "  }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "  return new "$currfactory"Factory"$parens";" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "}])" >> ./client/assets/js/"$currfactory"Factory.js
 	fi
-done
-for g in "${!factories_array[@]}"; do
-	echo "app.factory(""'"${factories_array[$g]}"Factory', ['$http', "
 done
 
 
