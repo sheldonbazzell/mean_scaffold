@@ -3,7 +3,7 @@
 # printf "%s\t%s\n" "$f" "${models_array[$f]}"
 
 #   /==================================================/  #
-# 			    	set up file structure      			  # 
+# 			    	set up file structure      			  #
 #   /==================================================/  #
 
 echo "  "
@@ -16,18 +16,18 @@ echo "Enter your Project Name and press [ENTER]: "
 read project_name
 mkdir $project_name
 cd $project_name
-# mkdir ./client
-# mkdir ./client/assets
-# mkdir ./client/assets/partials
-# mkdir ./client/assets/js
+mkdir ./client
+mkdir ./client/assets
+mkdir ./client/assets/partials
+mkdir ./client/assets/js
 touch ./client/index.html
 touch ./client/app.js
 touch ./client/assets/js/indexController.js
-touch ./client/assets/js/editController.js
+# touch ./client/assets/js/editController.js
 touch ./client/assets/js/showController.js
 touch ./client/assets/partials/index.html
 touch ./client/assets/partials/show.html
-touch ./client/assets/partials/edit.html
+# touch ./client/assets/partials/edit.html
 # touch ./client/assets/partials/new.html
 mkdir ./server
 mkdir ./server/config
@@ -39,16 +39,16 @@ touch ./server/config/mongoose.js
 
 #   /==================================================/  #
 #   /==================================================/  #
-# 				    	SERVER SIDE         			  # 
+# 				    	SERVER SIDE         			  #
 #   /==================================================/  #
 #   /==================================================/  #
 
 #  /==================================================/  #
-#			    	      CONFIG 						 # 
+#			    	      CONFIG 						 #
 #  /==================================================/  #
 
 #  /==================================================/  #
-#						mongoose.js 					 # 
+#						mongoose.js 					 #
 #  /==================================================/  #
 
 echo " var mongoose = require('mongoose'), " >> ./server/config/mongoose.js
@@ -64,7 +64,7 @@ echo " }) " >> ./server/config/mongoose.js
 
 
 #  /==================================================/  #
-#						server.js 						 # 
+#						server.js 						 #
 #  /==================================================/  #
 
 echo " var express = require('express'), " >> ./server.js
@@ -97,11 +97,11 @@ else
 fi
 
 #  /==================================================/  #
-#			   		 	  MODELS						 # 
+#			   		 	  MODELS						 #
 #  /==================================================/  #
 
 #  /==================================================/  #
-#			     	  declare models					 # 
+#			     	  declare models					 #
 #  /==================================================/  #
 
 declare -a models_array
@@ -115,7 +115,7 @@ function pushModel() {
 	echo "           | |          | |  | |__ __ ___    /  /     \  \   |  |  \      |                 "
 	echo "           |_|          |_|  |__ __ __ __|  /__/       \__\  |__|   \_____|                 "
 	echo "  																	                      "
-	echo "                                                                                            " 
+	echo "                                                                                            "
 	echo "  __ __ __     __ __ __                   __ ___     __ ___     __ __     _        ___      "
 	echo " |  _____  |  |  _____  |       /\       |  ____|   |  ____|   |     |   | |      |    \    "
 	echo " | |     |_|  | |     |_|      /  \      | |        | |        |  |  |   | |      |  |  |   "
@@ -172,7 +172,7 @@ function pushAttributes() {
 pushAttributes
 
 #  /==================================================/  #
-#			   	    	set models						 # 
+#			   	    	set models						 #
 #  /==================================================/  #
 for f in "${!models_array[@]}"; do
 	length=${#models_array[@]}
@@ -195,7 +195,7 @@ for f in "${!models_array[@]}"; do
 done
 
 #   /==================================================/  #
-# 				        CONTROLLERS         			  # 
+# 				        CONTROLLERS         			  #
 #   /==================================================/  #
 
 for f in "${!models_array[@]}"; do
@@ -253,7 +253,7 @@ for f in "${!models_array[@]}"; do
 done
 
 # #  /==================================================/  #
-# #					    	ROUTES 						   # 
+# #					    	ROUTES 						   #
 # #  /==================================================/  #
 
 for f in "${!models_array[@]}"; do
@@ -278,7 +278,7 @@ done
 echo "} " >> ./server/config/routes.js
 
 #  /==================================================/  #
-#				   index.html  (main)    				 # 
+#				   index.html  (main)    				 #
 #  /==================================================/  #
 
 echo "<!DOCTYPE html>" >> ./client/index.html
@@ -305,7 +305,7 @@ echo "</body>" >> ./client/index.html
 echo "</html>" >> ./client/index.html
 
 #  /==================================================/  #
-#				           app.js  	    				 # 
+#				           app.js  	    				 #
 #  /==================================================/  #
 
 route='$routeProvider'
@@ -328,11 +328,11 @@ echo "     .otherwise('/');" >> ./client/app.js
 echo " });" >> ./client/app.js
 
 #  /==================================================/  #
-#			      		 PARTIALS  	        			 # 
+#			      		 PARTIALS  	        			 #
 #  /==================================================/  #
 
 #  /==================================================/  #
-#			            index.html  	       			 # 
+#			            index.html  	       			 #
 #  /==================================================/  #
 
 for f in "${!models_array[@]}"; do
@@ -373,7 +373,7 @@ for f in "${!models_array[@]}"; do
 done
 
 #  /==================================================/  #
-#			              new.html  	       			 # 
+#			              new.html  	       			 #
 #  /==================================================/  #
 
 echo "      <!--                    -->" >> ./client/assets/partials/new.html
@@ -406,17 +406,63 @@ for m in "${!attr_array[@]}"; do
 done
 echo "  <input type='submit' value='Create'>" >> ./client/assets/partials/new.html
 echo "</form>" >> ./client/assets/partials/new.html
+#   /==================================================/  #
+# 				        edit.html        			  #
+#   /==================================================/  #
+
+for f in "${!models_array[@]}"; do
+	# printf "%s\t%s\n" "$f" "${models_array[$f]}"
+
+	if [ "${models_array[$f]}" == 'model' ]; then
+		currmodel="${models_array[$f+1]}"
+		lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
+		touch ./client/assets/partials/edit$currmodel.html
+
+		declare -a attr_array=()
+		echo "<form ng-repeat='"$currmodel" in "$currmodel"s' ng-submit='update()';>" >> ./client/assets/partials/edit$currmodel.html
+		for k in "${!models_array[@]}"; do
+			if [ "${models_array[$k]}" == 'a_name' ]; then
+				attr_array+=(${models_array[$k+3]})
+				attr_array+=(${models_array[$k+1]})
+			elif [ "${models_array[$k+1]}" == 'model' ]; then
+				break
+			fi
+		done
+		for m in "${!attr_array[@]}"; do
+			attr_name=""
+			if [ ${attr_array[$m]} == 'String' ]; then
+				attr_name=${attr_array[$m+1]}
+				echo "  <input type='text' ng-model='"$lowercurrmodel"."$attr_name"'>" >> ./client/assets/partials/edit$currmodel.html
+			elif [ "${attr_array[$m]}" == 'Number' ]; then
+				attr_name=${attr_array[$m+1]}
+				echo "  <input type='number' ng-model='"$lowercurrmodel"."$attr_name"'>" >> ./client/assets/partials/edit$currmodel.html
+			elif [ "${attr_array[$m]}" == 'Date' ]; then
+				attr_name=${attr_array[$m+1]}
+				echo "  <input type='date' ng-model='"$lowercurrmodel"."$attr_name"'>" >> ./client/assets/partials/edit$currmodel.html
+			elif [ "${attr_array[$m]}" == 'Boolean' ]; then
+				attr_name=${attr_array[$m+1]}
+				echo "  <select ng-model='"$lowercurrmodel"."$attr_name"'>" >> ./client/assets/partials/edit$currmodel.html
+				echo "    <option ng-bind='"$lowercurrmodel"."$attr_name"'></option>" >> ./client/assets/partials/edit$currmodel.html
+				echo "  </select>" >> ./client/assets/partials/edit$currmodel.html
+			fi
+		done
+		echo "  <input type='submit' value='Update'>" >> ./client/assets/partials/edit$currmodel.html
+		echo "</form>" >> ./client/assets/partials/edit$currmodel.html
+	fi
+done
 
 #  /==================================================/  #
-#			      	   CONTROLLERS          			 # 
+#			      	   CONTROLLERS          			 #
 #  /==================================================/  #
 
 #  /==================================================/  #
-#			         indexController.js	       			 # 
+#			         indexController.js	       			 #
 #  /==================================================/  #
 
 declare -a factories_array
 scope='$scope'
+location='$location'
+routeParams='$routeParams'
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
 		factories_array+=(${models_array[$f+1]}"s")
@@ -432,13 +478,13 @@ for g in "${!factories_array[@]}"; do
 	echo "'"${factories_array[$g]}"Factory', " >> ./client/assets/js/indexController.js
 done
 echo "function("$scope", " >> ./client/assets/js/indexController.js
-for k in "${!factories_array[@]}"; do
-	if [ "$k" == "$(( length-1 ))" ]; then
-		echo ""${factories_array[$k]}"Factory " >> ./client/assets/js/indexController.js
-	else
-		echo ""${factories_array[$k]}"Factory, " >> ./client/assets/js/indexController.js
-	fi
-done
+# for k in "${!factories_array[@]}"; do
+# 	if [ "$k" == "$(( length-1 ))" ]; then
+# 		echo ""${factories_array[$k]}"Factory " >> ./client/assets/js/indexController.js
+# 	else
+# 		echo ""${factories_array[$k]}"Factory, " >> ./client/assets/js/indexController.js
+# 	fi
+# done
 echo ") {" >> ./client/assets/js/indexController.js
 for l in "${!factories_array[@]}"; do
 	echo " "$scope"."${factories_array[$l]}" = [];" >> ./client/assets/js/indexController.js
@@ -452,8 +498,27 @@ done
 echo "}])" >> ./client/assets/js/indexController.js
 
 
+#   /==================================================/  #
+# 				        Edit Controller       			  #
+#   /==================================================/  #
+for f in "${!models_array[@]}"; do
+    # length=${#models_array[@]}
+  if [ "${models_array[$f]}" == 'model' ]; then
+    currmodel="${models_array[$f+1]}"
+    lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
+    touch ./client/assets/js/new"$currmodel"Controller.js
+    echo "app.controller('edit"$currmodel"Controller',['"$scope"','"$routeParams"','"$location"','"$currmodel"sFactory', " >> ./client/assets/js/edit"$currmodel"Controller.js
+    echo "function("$scope","$routeParams","$location","$currmodel"sFactory) {"  >> ./client/assets/js/edit"$currmodel"Controller.js
+    echo " "$scope".update = function() { " >> ./client/assets/js/edit"$currmodel"Controller.js
+    echo "   "$currmodel"sFactory.update("$scope"."$lowercurrmodel", "$routeParams")" >> ./client/assets/js/edit"$currmodel"Controller.js
+    echo "   "$location".url('/')" >> ./client/assets/js/edit"$currmodel"Controller.js
+    echo " }" >> ./client/assets/js/edit"$currmodel"Controller.js
+    echo "}])" >> ./client/assets/js/edit"$currmodel"Controller.js
+  fi
+done
+
 #  /==================================================/  #
-#			      	   FACTORIES            			 # 
+#			      	   FACTORIES            			 #
 #  /==================================================/  #
 
 declare -a factories_array
@@ -465,6 +530,3 @@ done
 for g in "${!factories_array[@]}"; do
 	echo "app.factory(""'"${factories_array[$g]}"Factory', ['$http', "
 done
-
-
-
