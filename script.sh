@@ -191,19 +191,20 @@ for f in "${!models_array[@]}"; do
 	length=${#models_array[@]}
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
-		touch ./server/models/"$currmodel".js
-		echo "var mongoose = require('mongoose');" >> ./server/models/"$currmodel".js
-		echo "mongoose.Promise = global.Promise;" >> ./server/models/"$currmodel".js
-		echo "var Schema   = mongoose.Schema," >> ./server/models/"$currmodel".js
-		echo "    "$currmodel"Schema = new Schema({" >> ./server/models/"$currmodel".js
+		lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
+		touch ./server/models/"$lowercurrmodel".js
+		echo "var mongoose = require('mongoose');" >> ./server/models/"$lowercurrmodel".js
+		echo "mongoose.Promise = global.Promise;" >> ./server/models/"$lowercurrmodel".js
+		echo "var Schema   = mongoose.Schema," >> ./server/models/"$lowercurrmodel".js
+		echo "    "$currmodel"Schema = new Schema({" >> ./server/models/"$lowercurrmodel".js
 		continue
 	fi
 	if [ "${models_array[$f]}" == 'a_name' ]; then
-		echo "    	"${models_array[$f+1]}": {type: "${models_array[$f+3]}"}," >> ./server/models/"$currmodel".js
+		echo "    	"${models_array[$f+1]}": {type: "${models_array[$f+3]}"}," >> ./server/models/"$lowercurrmodel".js
 	fi
 	if [ "${models_array[$f+1]}" == 'model' ] || [ "$f" == "$(( length-1 ))" ]; then
-		echo " },{timestamps:true});" >> ./server/models/"$currmodel".js
-		echo " 	  mongoose.model(""'"$currmodel"'"", "$currmodel"Schema)" >> ./server/models/"$currmodel".js
+		echo " },{timestamps:true});" >> ./server/models/"$lowercurrmodel".js
+		echo " 	  mongoose.model(""'"$currmodel"'"", "$currmodel"Schema)" >> ./server/models/"$lowercurrmodel".js
 	fi
 done
 
@@ -215,56 +216,53 @@ echo ""
 echo ""
 
 for f in "${!models_array[@]}"; do
-	
-	controller_name="$currmodel"'s'
-	touch ./server/controllers/$controller_name.js
 	length=${#models_array[@]}
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
-		controller_name="$currmodel"'s'
+		lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
 		parens="()"
-		touch ./server/controllers/$controller_name.js
-		echo "var mongoose = require('mongoose')," >> ./server/controllers/"$controller_name".js
-		echo " " $currmodel "= mongoose.model(""'"$currmodel"'"");" >> ./server/controllers/"$controller_name".js
-		echo " " >> ./server/controllers/"$controller_name".js
-		echo "function" $controller_name"Controller"$parens" {" >> ./server/controllers/"$controller_name".js
-		echo "  this.index = function(req,res) {" >> ./server/controllers/"$controller_name".js
-		echo "     "$currmodel".find({}, function(err,"$currmodel"s) {" >> ./server/controllers/"$controller_name".js
-		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-		echo "       else { res.json("$currmodel"s); }" >> ./server/controllers/"$controller_name".js
-		echo "     })" >> ./server/controllers/"$controller_name".js
-		echo "  }" >> ./server/controllers/"$controller_name".js
-		echo " " >> ./server/controllers/"$controller_name".js
-		echo "  this.create = function(req,res) {" >> ./server/controllers/"$controller_name".js
-		echo "     var "$currmodel" = new" $currmodel"(req.body);" >> ./server/controllers/"$controller_name".js
-		echo "     "$currmodel".save(function(err) {" >> ./server/controllers/"$controller_name".js
-		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-		echo "       else { res.redirect('/"$currmodel"s'); }" >> ./server/controllers/"$controller_name".js
-		echo "     })" >> ./server/controllers/"$controller_name".js
-		echo "  }" >> ./server/controllers/"$controller_name".js
-		echo " " >> ./server/controllers/"$controller_name".js
-		echo "  this.show = function(req,res) {" >> ./server/controllers/"$controller_name".js
-		echo "     "$currmodel".findOne({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
-		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
-		echo "     })" >> ./server/controllers/"$controller_name".js
-		echo "  }" >> ./server/controllers/"$controller_name".js
-		echo " " >> ./server/controllers/"$controller_name".js
-		echo "  this.update = function(req,res) {" >> ./server/controllers/"$controller_name".js
-		echo "     "$currmodel".update({_id:req.params.id}, req.body, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
-		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
-		echo "     })" >> ./server/controllers/"$controller_name".js
-		echo "  }" >> ./server/controllers/"$controller_name".js
-		echo " " >> ./server/controllers/"$controller_name".js
-		echo "  this.destroy = function(req,res) {" >> ./server/controllers/"$controller_name".js
-		echo "     "$currmodel".remove({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$controller_name".js
-		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$controller_name".js
-		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$controller_name".js
-		echo "     })" >> ./server/controllers/"$controller_name".js
-		echo "  }" >> ./server/controllers/"$controller_name".js
-		echo "}" >> ./server/controllers/"$controller_name".js
-		echo "module.exports = new "$controller_name"Controller"$parens"" >> ./server/controllers/"$controller_name".js
+		touch ./server/controllers/"$lowercurrmodel"s.js
+		echo "var mongoose = require('mongoose')," >> ./server/controllers/"$lowercurrmodel"s.js
+		echo " " $currmodel "= mongoose.model(""'"$currmodel"'"");" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo " " >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "function "$lowercurrmodel"sController"$parens" {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  this.index = function(req,res) {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     "$currmodel".find({}, function(err,"$currmodel"s) {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       else { res.json("$currmodel"s); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     })" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo " " >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  this.create = function(req,res) {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     var "$currmodel" = new" $currmodel"(req.body);" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     "$currmodel".save(function(err) {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       else { res.redirect('/"$currmodel"s'); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     })" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo " " >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  this.show = function(req,res) {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     "$currmodel".findOne({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     })" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo " " >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  this.update = function(req,res) {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     "$currmodel".update({_id:req.params.id}, req.body, function(err,"$currmodel") {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     })" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo " " >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  this.destroy = function(req,res) {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     "$currmodel".remove({_id:req.params.id}, function(err,"$currmodel") {" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       if(err) { res.json(err); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "       else { res.json("$currmodel"); }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "     })" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "  }" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "}" >> ./server/controllers/"$lowercurrmodel"s.js
+		echo "module.exports = new "$lowercurrmodel"sController"$parens"" >> ./server/controllers/"$lowercurrmodel"s.js
 	fi
 done
 
@@ -274,21 +272,21 @@ done
 
 for f in "${!models_array[@]}"; do
 	currmodel="${models_array[$f+1]}"
-	controller_name="$currmodel"'s'
+	lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
 	if [ "${models_array[$f]}" == 'model' ]; then
-		echo "var "$controller_name" = require('../controllers/"$controller_name".js');" >> ./server/config/routes.js
+		echo "var "$lowercurrmodel"s = require('../controllers/"$lowercurrmodel"s.js');" >> ./server/config/routes.js
 	fi
 done
 echo "module.exports = function(app) {" >> ./server/config/routes.js
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
-		controller_name="$currmodel"'s'
-		echo "  app.get('/"$controller_name"', "$controller_name".index);" >> ./server/config/routes.js
-		echo "  app.post('/"$controller_name"', "$controller_name".create);" >> ./server/config/routes.js
-		echo "  app.get('/"$controller_name"/:id', "$controller_name".show);" >> ./server/config/routes.js
-		echo "  app.put('/"$controller_name"/:id', "$controller_name".update);" >> ./server/config/routes.js
-		echo "  app.delete('/"$controller_name"/:id', "$controller_name".destroy);" >> ./server/config/routes.js
+		lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
+		echo "  app.get('/"$lowercurrmodel"s', "$lowercurrmodel"s.index);" >> ./server/config/routes.js
+		echo "  app.post('/"$lowercurrmodel"s', "$lowercurrmodel"s.create);" >> ./server/config/routes.js
+		echo "  app.get('/"$lowercurrmodel"s/:id', "$lowercurrmodel"s.show);" >> ./server/config/routes.js
+		echo "  app.put('/"$lowercurrmodel"s/:id', "$lowercurrmodel"s.update);" >> ./server/config/routes.js
+		echo "  app.delete('/"$lowercurrmodel"s/:id', "$lowercurrmodel"s.destroy);" >> ./server/config/routes.js
 	fi
 done
 echo "} " >> ./server/config/routes.js
@@ -333,8 +331,9 @@ echo "      controller:  'indexController'" >> ./client/app.js
 echo "    }) " >> ./client/app.js
 for f in "${!models_array[@]}"; do
 	currmodel=${models_array[$f+1]}
+	lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
 	if [ "${models_array[$f]}" == 'model' ]; then
-		echo "    .when('/new/"$currmodel"', {" >> ./client/app.js
+		echo "    .when('/new/"$lowercurrmodel"', {" >> ./client/app.js
 		echo "      templateUrl: 'assets/partials/new"$currmodel".html'," >> ./client/app.js
 		echo "      controller:  'new"$currmodel"Controller'" >> ./client/app.js
 		echo "    }) " >> ./client/app.js
@@ -342,8 +341,9 @@ for f in "${!models_array[@]}"; do
 done
 for f in "${!models_array[@]}"; do
 	currmodel=${models_array[$f+1]}
+	lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
 	if [ "${models_array[$f]}" == 'model' ]; then
-		echo "    .when('/"$currmodel"/:id', {" >> ./client/app.js
+		echo "    .when('/"$lowercurrmodel"/:id', {" >> ./client/app.js
 		echo "      templateUrl: 'assets/partials/show"$currmodel".html'," >> ./client/app.js
 		echo "      controller:  'show"$currmodel"Controller'" >> ./client/app.js
 		echo "    }) " >> ./client/app.js
@@ -351,8 +351,9 @@ for f in "${!models_array[@]}"; do
 done
 for f in "${!models_array[@]}"; do
 	currmodel=${models_array[$f+1]}
+	lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
 	if [ "${models_array[$f]}" == 'model' ]; then
-		echo "    .when('/edit/"$currmodel"/:id', {" >> ./client/app.js
+		echo "    .when('/edit/"$lowercurrmodel"/:id', {" >> ./client/app.js
 		echo "      templateUrl: 'assets/partials/edit"$currmodel".html'," >> ./client/app.js
 		echo "      controller:  'edit"$currmodel"Controller'" >> ./client/app.js
 		echo "    }) " >> ./client/app.js
@@ -372,7 +373,8 @@ echo " });" >> ./client/app.js
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
-		echo "<a href=""'#!/new/"$currmodel"'"">Create "$currmodel"</a>" >> ./client/assets/partials/index.html
+		lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
+		echo "<a href=""'#!/new/"$lowercurrmodel"'"">Create "$currmodel"</a>" >> ./client/assets/partials/index.html
 		echo "" >> ./client/assets/partials/index.html
 	fi
 done
