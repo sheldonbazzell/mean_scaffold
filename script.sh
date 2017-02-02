@@ -30,9 +30,6 @@ touch ./client/assets/js/indexController.js
 touch ./client/assets/js/editController.js
 touch ./client/assets/js/showController.js
 touch ./client/assets/partials/index.html
-# touch ./client/assets/partials/show.html
-# touch ./client/assets/partials/edit.html
-# touch ./client/assets/partials/new.html
 mkdir ./server
 mkdir ./server/config
 mkdir ./server/models
@@ -104,14 +101,6 @@ fi
 #			   		 	  MODELS						 #
 #  /==================================================/  #
 
-#  /==================================================/  #
-# <<<<<<< HEAD
-#						MODELS 							 #
-# =======
-# #			     	  declare models					 #
-# >>>>>>> 34b689b4cd7594b5b7dee6f7b1ff21c8a0dbd243
-#  /==================================================/  #
-
 declare -a models_array
 function pushModel() {
 	echo "            ___        ___    __ __ __ __          _          ___       __                  "
@@ -144,6 +133,7 @@ function pushModel() {
 pushModel
 
 function pushAttributes() {
+
 	echo "  "
 	echo "Enter Attribute NAME and press [ENTER]: "
 	read attr_name
@@ -156,42 +146,10 @@ function pushAttributes() {
 	echo "  "
 	echo "Enter Attribute TYPE and press [ENTER]: "
 	read attr_type
-	while [ -z $attr_type ]; do
-		echo -n "Enter Attribute TYPE and press [ENTER]: "
-		read attr_type
-	done
-	attr_type="$(echo $attr_type | tr '[:upper:]' '[:lower:]')"
-	arr=('string' 'number' 'date' 'boolean' 'array')
-	for i in "${!arr[@]}"; do
-		if [ $attr_type == "${arr[$i]}" ]; then
-			# attr_type="$(echo ${attr_type^})"
-			break
-		else
-			attr_type=false
-		fi
-	done
-	while [ $attr_type == false ]; do
-		echo -n "Enter VALID Attribute TYPE and press [ENTER]: "
-		read attr_type
-	done
-	attr_type="$(echo ${attr_type^})"
-	models_array+=('a_type' $attr_type)
-# <<<<<<< HEAD
-	echo -n "Another Attribute? Type no to exit: "
-=======
-	echo "  "
-	echo "Another Attribute? Type no to exit"
-# >>>>>>> 34b689b4cd7594b5b7dee6f7b1ff21c8a0dbd243
 	read another_attr
 	if ! [ $another_attr == 'no' ]; then
 		pushAttributes
 	else
-# <<<<<<< HEAD
-		echo -n "Another Model? Type no to exit: "
-=======
-		echo "  "
-		echo "Another Model? Type no to exit"
-# >>>>>>> 34b689b4cd7594b5b7dee6f7b1ff21c8a0dbd243
 			read another_model
 			if ! [ $another_model == 'no' ]; then
 				pushModel
@@ -218,24 +176,15 @@ pushAttributes
 #  /==================================================/  #
 #			   	    	set models						 #
 #  /==================================================/  #
+for g in "${!models_array[@]}"; do
+	if [ "${models_array[$g]}" = 'Text' ]; then
+		models_array[$g]="String"
+	fi
+done
 for f in "${!models_array[@]}"; do
 	length=${#models_array[@]}
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
-# <<<<<<< HEAD
-		lowercurrmodel="$(echo $currmodel | tr '[:upper:]' '[:lower:]')"
-		touch ./server/models/"$lowercurrmodel".js
-		echo "var mongoose = require('mongoose');" >> ./server/models/"$lowercurrmodel".js
-		echo "mongoose.Promise = global.Promise;" >> ./server/models/"$lowercurrmodel".js
-		echo "var Schema   = mongoose.Schema," >> ./server/models/"$lowercurrmodel".js
-		echo "    "$lowercurrmodel"Schema = new Schema({" >> ./server/models/"$lowercurrmodel".js
-# =======
-		touch ./server/models/"$currmodel".js
-		echo "var mongoose = require('mongoose');" >> ./server/models/"$currmodel".js
-		echo "mongoose.Promise = global.Promise;" >> ./server/models/"$currmodel".js
-		echo "var Schema   = mongoose.Schema," >> ./server/models/"$currmodel".js
-		echo "    "$currmodel"Schema = new Schema({" >> ./server/models/"$currmodel".js
-# >>>>>>> 34b689b4cd7594b5b7dee6f7b1ff21c8a0dbd243
 		continue
 	fi
 	if [ "${models_array[$f]}" == 'a_name' ]; then
@@ -247,21 +196,10 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 
-# <<<<<<< HEAD
-
- # /==================================================/  #
- # 					CONTROLLERS 					 #
- # /==================================================/  #
-# =======
 #   /==================================================/  #
 # 				        CONTROLLERS         			  #
 #   /==================================================/  #
-# >>>>>>> 34b689b4cd7594b5b7dee6f7b1ff21c8a0dbd243
 
-for f in "${!models_array[@]}"; do
-	printf "%s\t%s\n" "$f" "${models_array[$f]}"
-	# controller_name="$currmodel"'s'
-	# touch ./server/controllers/$controller_name.js
 	length=${#models_array[@]}
 	if [ "${models_array[$f]}" == 'model' ]; then
 		currmodel="${models_array[$f+1]}"
@@ -313,15 +251,6 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 
-# <<<<<<< HEAD
-#  /==================================================/  #
-#						ROUTES 							 #
-#  /==================================================/  #
-# =======
-# #  /==================================================/  #
-# #					    	ROUTES 						   #
-# #  /==================================================/  #
-# >>>>>>> 34b689b4cd7594b5b7dee6f7b1ff21c8a0dbd243
 
 for f in "${!models_array[@]}"; do
 	currmodel="${models_array[$f+1]}"
@@ -345,8 +274,7 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 echo "} " >> ./server/config/routes.js
-# <<<<<<< HEAD
-# =======
+
 
 #  /==================================================/  #
 #				   index.html  (main)    				 #
@@ -361,9 +289,8 @@ echo "  <script src='angular-route/angular-route.js'></script>" >> ./client/inde
 echo "  <script src='app.js'></script>" >> ./client/index.html
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
-		currmodel="${models_array[$f+1]}"
-		touch ./client/assets/js/"$currmodel"Factory.js
-		echo "  <script src=""'assets/js/"$currmodel"Factory.js'""></script>" >> ./client/index.html
+		currmodel=${models_array[$f+1]}"sFactory"
+		echo "  <script src=""'assets/js/"$currmodel".js'""></script>" >> ./client/index.html
 	fi
 done
 echo "  <script src='assets/js/indexController.js'></script>" >> ./client/index.html
@@ -387,14 +314,33 @@ echo "    .when('/', {" >> ./client/app.js
 echo "      templateUrl: 'assets/partials/index.html'," >> ./client/app.js
 echo "      controller:  'indexController'" >> ./client/app.js
 echo "    }) " >> ./client/app.js
-echo "    .when('/new/:class', {" >> ./client/app.js
-echo "      templateUrl: 'assets/partials/new.html'," >> ./client/app.js
-echo "      controller:  'newController'" >> ./client/app.js
-echo "    }) " >> ./client/app.js
-echo "    .when('/:class/:id', {" >> ./client/app.js
-echo "      templateUrl: 'assets/partials/show.html'," >> ./client/app.js
-echo "      controller:  'showController'" >> ./client/app.js
-echo "    }) " >> ./client/app.js
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/new/"$currmodel"', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/new"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'new"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/"$currmodel"/:id', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/show"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'show"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/edit/"$currmodel"/:id', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/edit"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'edit"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
 echo "     .otherwise('/');" >> ./client/app.js
 echo " });" >> ./client/app.js
 
@@ -439,7 +385,6 @@ for f in "${!models_array[@]}"; do
 		echo "     </td>" >> ./client/assets/partials/index.html
 		echo "   </tr>" >> ./client/assets/partials/index.html
 		echo " </table>" >> ./client/assets/partials/index.html
-
 	fi
 done
 
@@ -530,9 +475,6 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 length=${#factories_array[@]}
-# for f in "${!factories_array[@]}"; do
-# 	printf "%s\t%s\n" "$f" "${factories_array[$f]}"
-# done
 
 echo "app.controller('indexController',[""'"$scope"'"", " >> ./client/assets/js/indexController.js
 for g in "${!factories_array[@]}"; do
@@ -584,14 +526,43 @@ done
 #			      	   FACTORIES            			 #
 #  /==================================================/  #
 
-declare -a factories_array
+http='$http'
+parens="()"
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
-		factories_array+=(${models_array[$f+1]}"s")
+		currfactory=${models_array[$f+1]}"s"
+		echo "app.factory(""'"$currfactory"Factory', ['"$http"', function("$http"){" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "  function "$currfactory"Factory"$parens"{" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.index = function(callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".get('/"$currfactory"').then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          callback(res.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.create = function(data, callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".post('/"$currfactory"', data).then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          callback(res.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.update = function(data, callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".put('/"$currfactory"', data).then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          callback(res.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    this.destroy = function(data, callback) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      var id = data._id;" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "      "$http".delete('/"$currfactory"' + id).then(function(res) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "        "$http".get('/"$currfactory"').then(function(newRes) {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          if(callback && typeof callback == 'function') {" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "            callback(newRes.data);" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "          }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "    }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "  }" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "  return new "$currfactory"Factory"$parens";" >> ./client/assets/js/"$currfactory"Factory.js
+		echo "}])" >> ./client/assets/js/"$currfactory"Factory.js
 	fi
-done
-for g in "${!factories_array[@]}"; do
-	echo "app.factory(""'"${factories_array[$g]}"Factory', ['$http', "
 done
 
 
