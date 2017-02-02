@@ -1,0 +1,17 @@
+<a href='#!/new/USer'>Create USer</a>
+
+<h1>USer</h1>
+<table>
+ <tr>
+   <th>name</th>
+   <th>Actions</th>
+   </tr>
+   <tr ng-repeat='USer in USers'>
+     <td ng-bind='USer.name'></td>
+     <td>
+       <a href='#!/USer/{{USer._id}}'>Show</a>
+       <a href='#!/USer/{{USer._id}}/edit'>Edit</a>
+       <button ng-click='destroy(USer)'>X</button>
+     </td>
+   </tr>
+ </table>
