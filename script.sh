@@ -26,9 +26,12 @@ touch ./client/assets/js/indexController.js
 # touch ./client/assets/js/editController.js
 touch ./client/assets/js/showController.js
 touch ./client/assets/partials/index.html
+<<<<<<< HEAD
 touch ./client/assets/partials/show.html
 # touch ./client/assets/partials/edit.html
 # touch ./client/assets/partials/new.html
+=======
+>>>>>>> 85f248375d84ef3183c2829d097a803804edbefe
 mkdir ./server
 mkdir ./server/config
 mkdir ./server/models
@@ -132,6 +135,7 @@ function pushModel() {
 pushModel
 
 function pushAttributes() {
+
 	echo "  "
 	echo "Enter Attribute NAME and press [ENTER]: "
 	read attr_name
@@ -139,15 +143,25 @@ function pushAttributes() {
 	echo "  "
 	echo "Enter Attribute TYPE and press [ENTER]: "
 	read attr_type
-	models_array+=('a_type' $attr_type)
+	if [ $attr_type == 'String' ]; then
+		echo "  "
+		echo "Do you want this attribute to be a text field? (yes/no)"
+		read str_type
+		if [ $str_type == 'yes' ]; then
+			text_attr='Text'
+			models_array+=('a_type' $text_attr)
+		else
+			models_array+=('a_type' $attr_type)
+		fi
+	fi
 	echo "  "
-	echo "Another Attribute? Type no to exit"
+	echo "Another Attribute? (yes/no)"
 	read another_attr
 	if ! [ $another_attr == 'no' ]; then
 		pushAttributes
 	else
 		echo "  "
-		echo "Another Model? Type no to exit"
+		echo "Another Model? (yes/no)"
 			read another_model
 			if ! [ $another_model == 'no' ]; then
 				pushModel
@@ -174,6 +188,11 @@ pushAttributes
 #  /==================================================/  #
 #			   	    	set models						 #
 #  /==================================================/  #
+for g in "${!models_array[@]}"; do
+	if [ "${models_array[$g]}" = 'Text' ]; then
+		models_array[$g]="String"
+	fi
+done
 for f in "${!models_array[@]}"; do
 	length=${#models_array[@]}
 	if [ "${models_array[$f]}" == 'model' ]; then
@@ -197,9 +216,12 @@ done
 #   /==================================================/  #
 # 				        CONTROLLERS         			  #
 #   /==================================================/  #
+echo ""
+echo ""
+echo ""
 
 for f in "${!models_array[@]}"; do
-	# printf "%s\t%s\n" "$f" "${models_array[$f]}"
+
 	controller_name="$currmodel"'s'
 	touch ./server/controllers/$controller_name.js
 	length=${#models_array[@]}
@@ -290,9 +312,8 @@ echo "  <script src='angular-route/angular-route.js'></script>" >> ./client/inde
 echo "  <script src='app.js'></script>" >> ./client/index.html
 for f in "${!models_array[@]}"; do
 	if [ "${models_array[$f]}" == 'model' ]; then
-		currmodel="${models_array[$f+1]}"
-		touch ./client/assets/js/"$currmodel"Factory.js
-		echo "  <script src=""'assets/js/"$currmodel"Factory.js'""></script>" >> ./client/index.html
+		currmodel=${models_array[$f+1]}"sFactory"
+		echo "  <script src=""'assets/js/"$currmodel".js'""></script>" >> ./client/index.html
 	fi
 done
 echo "  <script src='assets/js/indexController.js'></script>" >> ./client/index.html
@@ -316,14 +337,33 @@ echo "    .when('/', {" >> ./client/app.js
 echo "      templateUrl: 'assets/partials/index.html'," >> ./client/app.js
 echo "      controller:  'indexController'" >> ./client/app.js
 echo "    }) " >> ./client/app.js
-echo "    .when('/new/:class', {" >> ./client/app.js
-echo "      templateUrl: 'assets/partials/new.html'," >> ./client/app.js
-echo "      controller:  'newController'" >> ./client/app.js
-echo "    }) " >> ./client/app.js
-echo "    .when('/:class/:id', {" >> ./client/app.js
-echo "      templateUrl: 'assets/partials/show.html'," >> ./client/app.js
-echo "      controller:  'showController'" >> ./client/app.js
-echo "    }) " >> ./client/app.js
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/new/"$currmodel"', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/new"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'new"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/"$currmodel"/:id', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/show"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'show"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
+for f in "${!models_array[@]}"; do
+	currmodel=${models_array[$f+1]}
+	if [ "${models_array[$f]}" == 'model' ]; then
+		echo "    .when('/edit/"$currmodel"/:id', {" >> ./client/app.js
+		echo "      templateUrl: 'assets/partials/edit"$currmodel".html'," >> ./client/app.js
+		echo "      controller:  'edit"$currmodel"Controller'" >> ./client/app.js
+		echo "    }) " >> ./client/app.js
+	fi
+done
 echo "     .otherwise('/');" >> ./client/app.js
 echo " });" >> ./client/app.js
 
@@ -368,7 +408,6 @@ for f in "${!models_array[@]}"; do
 		echo "     </td>" >> ./client/assets/partials/index.html
 		echo "   </tr>" >> ./client/assets/partials/index.html
 		echo " </table>" >> ./client/assets/partials/index.html
-
 	fi
 done
 
@@ -469,9 +508,6 @@ for f in "${!models_array[@]}"; do
 	fi
 done
 length=${#factories_array[@]}
-# for f in "${!factories_array[@]}"; do
-# 	printf "%s\t%s\n" "$f" "${factories_array[$f]}"
-# done
 
 echo "app.controller('indexController',[""'"$scope"'"", " >> ./client/assets/js/indexController.js
 for g in "${!factories_array[@]}"; do
@@ -520,13 +556,3 @@ done
 #  /==================================================/  #
 #			      	   FACTORIES            			 #
 #  /==================================================/  #
-
-declare -a factories_array
-for f in "${!models_array[@]}"; do
-	if [ "${models_array[$f]}" == 'model' ]; then
-		factories_array+=(${models_array[$f+1]}"s")
-	fi
-done
-for g in "${!factories_array[@]}"; do
-	echo "app.factory(""'"${factories_array[$g]}"Factory', ['$http', "
-done
