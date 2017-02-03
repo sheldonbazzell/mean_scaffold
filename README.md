@@ -1,5 +1,5 @@
 <h1>Mean Scaffold</h1>
-<h4>Get a full MEAN prototype up and running quickly from the command line</h4>
+<h4>Get a MEAN stack CRUD app up and running quickly from the command line</h4>
 <p>Highly customizable before and after your code is compiled. Currently compatible with the stock MEAN stack.</p>
 <h2>Setup</h2>
 <p>Find a directory where you want to start your app. We'll call this your 'super root', as Mean Scaffold will create a root directory within this directory for your app.<p>
@@ -20,7 +20,7 @@
 </ol>
 <hr>
 <h2>Associations</h2>
-<p>Currently supports a one-to-many relationship. The parent class must be declared first with a attribute name of the related class (singular), and attribute type of ObjectsArray. The child class must be declared directly after the parent, with an attribute name of the related class (singular), and attribute type of ObjectId.</p>
+<p>Currently supports a one-to-many relationship. The parent class must be declared first with an attribute name of the related class (singular), and attribute type of ObjectsArray. The child class must be declared directly after the parent, with an attribute name of the related class (singular), and attribute type of ObjectId.</p>
 <p>Example:</p>
 <p>Model: User</p>
 <p>Attribute Name: post</p>
