@@ -1,6 +1,4 @@
 <h1>Mean Scaffold</h1>
-<h4>Get a full MEAN prototype up and running quickly from the command line</h4>
-<p>Highly customizable before and after your code is compiled. Currently compatible with the stock MEAN stack</p>
 <h2>Setup</h2>
 <p>Find a directory where you want to start your app. We'll call this your 'super root', as Mean Scaffold will create a root directory within this directory for your app.<p>
 <hr>
