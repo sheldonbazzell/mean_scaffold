@@ -21,7 +21,7 @@
 <hr>
 <h2>Associations</h2>
 <p>Currently supports a one-to-many relationship. The parent class must be declared first with a attribute name of the related class (singular), and attribute type of ObjectsArray. The child class must be declared directly after the parent, with an attribute name of the related class (singular), and attribute type of ObjectId.</p>
-<p>Example:</p>
+<p><u>Example</u></p>
 <p>Model: User</p>
 <p>Attribute Name: post</p>
 <p>Attribute Type: ObjectsArray</p>
