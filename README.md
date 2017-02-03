@@ -5,7 +5,8 @@
 <p>Find a directory where you want to start your app. We'll call this your 'super root', as Mean Scaffold will create a root directory within this directory for your app.<p>
 <hr>
 <h2>Install</h2>
-<h3>npm install mean-scaffold</h3>
+<h3>npm install -g mean-scaffold</h3>
+<h5>You can now run the command 'mean-scaffold' from the directory of your choice.</h5>
 <hr>
 <h2>Model Setup</h2>
 <p>Your command line will prompt you for the following:</p>
