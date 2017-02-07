@@ -2,7 +2,7 @@
 <h4>Get a MEAN stack CRUD app up and running quickly from the command line</h4>
 <p>Highly customizable before and after your code is compiled. Currently compatible with the stock MEAN stack.</p>
 <h2>Setup</h2>
-<p>Find a directory where you want to start your app. We'll call this your 'super root', as Mean Scaffold will create a root directory within this directory for your app.<p>
+<p>Find a directory where you want to start your app. We'll call this your 'super root', as Mean Scaffold will create a root directory within this directory for your app.</p>
 <hr>
 <h2>Install</h2>
 <h3>npm install -g mean-scaffold</h3>
